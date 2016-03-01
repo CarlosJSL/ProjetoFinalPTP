@@ -1,19 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Pixel { // registro denominado Pixel que guardará três variáveis para representar um pixel , com as cores Red , Green e Blue
+// registro denominado Pixel que guardará
+//três variáveis para representar um pixel
+//, com as cores Red , Green e Blue
+typedef struct Pixel { 
   int r;
   int g;
   int b;
 }Pixel;
-
-typedef struct Imagem { // Registro Imagem que alem de ter  Tamanho e Largura terá uma variável pixels do tipo Pixel ou seja , ela terá as variáveis int r, g e b.
+// Registro Imagem que alem de ter  Tamanho e Largura
+//terá uma variável pixels do tipo Pixel ou seja ,
+//ela terá as variáveis int r, g e b.
+typedef struct Imagem { 
   int largura;
   int altura;
   Pixel** pixels;
 }Imagem;
 
-Imagem* criar_imagem(int largura, int altura) { // função que irá criar a imagem
+// função que irá criar a imagem
+Imagem* criar_imagem(int largura, int altura) { 
   int i;
   Imagem* nova_imagem; // primeiramente cria-se uma varíavel do tipo Imagem , pois ela receberá posteriormente  atributos como Largura , Altura e Pixel
   nova_imagem = malloc(sizeof(Imagem));// alocação dinamica do tamanho da imagem
@@ -39,7 +45,10 @@ int media_pixel(Pixel limiarizacao) { // função criada para fazer uma media  dos
   media = (limiarizacao.r + limiarizacao.g + limiarizacao.b) / 3;
   return media;
 }
-Pixel calculo_media(Pixel* a, Pixel* b, Pixel* c, Pixel* d) {// o zoom deixará pixels vazio pois a imagem será aumentada. Logo, será preciso colocar pixels para preencher essas lacunas , sendo assim , se calcula a media de cada pixel a redor dessas lacunas e joga esse valor para o espaço vazio
+// o zoom deixará pixels vazio pois a imagem será aumentada.
+//Logo, será preciso colocar pixels para preencher essas lacunas ,
+//sendo assim , se calcula a media de cada pixel a redor dessas lacunas e joga esse valor para o espaço vazio
+Pixel calculo_media(Pixel* a, Pixel* b, Pixel* c, Pixel* d) {
   Pixel aux;// variavel criada para receber as cores rgb
   aux.r = (a -> r + b -> r + c -> r + d -> r) / 4;// media dos pixels
   aux.g = (a -> g + b -> g + c -> g + d -> g) / 4;
@@ -108,7 +117,10 @@ Imagem* binarizacao(Imagem* original) { // Função que irá fazer a binarizacao da
   for (i = 0; i < altura; i++) {
     for (j = 0; j < largura; j++) {
       media = media_pixel(original -> pixels[i][j]); // será feita uma média dos r,g e b de cada pixel e o valor será retornado para a variavel media
-      if (media > 127) { // estabelecemos aqui um limite na limiarização , caso a media for maior que 127 , sete ela como 255 (branco) , caso seja menor ou igual a 127 , sete ela como preto, dando assim um efeito de preto e branco na imagem.
+		// estabelecemos aqui um limite na limiarização ,
+		//caso a media for maior que 127 , sete ela como 255 (branco) ,
+		//caso seja menor ou igual a 127 , sete ela como preto, dando assim um efeito de preto e branco na imagem.
+		if (media > 127) { 
         media = 255;
         original -> pixels[i][j].r = media; // os pixels da imagem clonada receberão  os valores da media de acordo com o if , para cada r ,g e b
         original -> pixels[i][j].g = media;// os pixels da imagem clonada receberão  os valores da media de acordo com o if , para cada r ,g e b
@@ -126,12 +138,19 @@ Imagem* binarizacao(Imagem* original) { // Função que irá fazer a binarizacao da
 }
 //---------------------------------------------------- funcao para o calculo de filtros --------------------------------------------------------------------------------------------//
 
-void DetecBordCalculo(Imagem* imagem_clonada, Imagem* imagem_original, int i, int j) { // função para o o calculo do filtro de detecção de bordas que terá como parametros uma imagem que será o clone de outra imagem clonada primeria que receberá o nome de originale os i e j dos respectivos for's que mais tarde serão necessarios para a implementação dos pixels na imagem
+// função para o o calculo do filtro de detecção de bordas que
+//terá como parametros uma imagem que será o clone de outra imagem clonada
+//primeria que receberá o nome de originale os i e j dos respectivos for's
+//que mais tarde serão necessarios para a implementação dos pixels na imagem
+void DetecBordCalculo(Imagem* imagem_clonada, Imagem* imagem_original, int i, int j) { 
   float Bordas[3][3] = {-1, -1, -1, -1, 8, -1, -1, -1, -1};
   int ii, jj, x, y, r_ss = 0, g_ss = 0, b_ss = 0;
   x = i - 1;// fazer com que ele nao fique menos pra nao pegar a borda preta
   ii = 0;
-  while (x <= i + 1){// while para controlar o tamanho da matriz do filtro afim de que ele sempre seja zerado , quando o segundo while chega ao fim esse while continua  até a matriz chegar a posição 3x3 onde irá ser resetada
+  // while para controlar o tamanho da matriz do filtro
+  //afim de que ele sempre seja zerado , quando o segundo while chega
+  //ao fim esse while continua  até a matriz chegar a posição 3x3 onde irá ser resetada
+  while (x <= i + 1){
     y = j - 1;
     jj = 0;
     while (y <= j + 1){
@@ -149,12 +168,19 @@ void DetecBordCalculo(Imagem* imagem_clonada, Imagem* imagem_original, int i, in
   imagem_clonada -> pixels[i][j].g = saturacao(g_ss);
   imagem_clonada -> pixels[i][j].b = saturacao(b_ss);
 }
-void BlurCalculo(Imagem * imagem_clonada, Imagem * imagem_original, int i, int j) {// função para o o calculo do filtro de Blur que terá como parametros uma imagem que será o clone de outra imagem clonada primeria que receberá o nome de originale os i e j dos respectivos for's que mais tarde serão necessarios para a implementação dos pixels na imagem
+// função para o o calculo do filtro de Blur
+//que terá como parametros uma imagem que será o clone
+//de outra imagem clonada primeria que receberá o nome de original
+//e os i e j dos respectivos for's que mais tarde serão necessarios para a implementação dos pixels na imagem
+void BlurCalculo(Imagem * imagem_clonada, Imagem * imagem_original, int i, int j) {
   float blur[3][3] = {1 / 9.0, 1 / 9.0, 1 / 9.0, 1 / 9.0, 1 / 9.0, 1 / 9.0, 1 / 9.0, 1 / 9.0, 1 / 9.0};
   int ii, jj, x, y, r_ss = 0, g_ss = 0, b_ss = 0;
   x = i - 1;
   ii = 0;
-  while (x <= i + 1) {// while para controlar o tamanho da matriz do filtro afim de que ele sempre seja zerado , quando o segundo while chega ao fim esse while continua  até a matriz chegar a posição 3x3 onde irá ser resetada
+  // while para controlar o tamanho da matriz do filtro a
+  //fim de que ele sempre seja zerado , quando o segundo while
+  //chega ao fim esse while continua  até a matriz chegar a posição 3x3 onde irá ser resetada
+  while (x <= i + 1) {
     y = j - 1;
     jj = 0;
     while (y <= j + 1) {
@@ -172,13 +198,19 @@ void BlurCalculo(Imagem * imagem_clonada, Imagem * imagem_original, int i, int j
   imagem_clonada -> pixels[i][j].g = saturacao(g_ss);
   imagem_clonada -> pixels[i][j].b = saturacao(b_ss);
 }
-void sharpeningCalculo(Imagem* imagem_clonada, Imagem* imagem_original, int i, int j) {// função para o o calculo do filtro de Sharppening que terá como parametros uma imagem que será o clone de outra imagem clonada primeria que receberá o nome de originale os i e j dos respectivos for's que mais tarde serão necessarios para a implementação dos pixels na imagem
+// função para o o calculo do filtro de Sharppening que
+//terá como parametros uma imagem que será o clone de outra imagem
+//clonada primeria que receberá o nome de originale os i e j dos respectivos
+//for's que mais tarde serão necessarios para a implementação dos pixels na imagem
+void sharpeningCalculo(Imagem* imagem_clonada, Imagem* imagem_original, int i, int j) {
   int sharp[3][3] = {0, -1, 0, -1, 5, -1, 0, -1, 0};
   int ii, jj, x, y, r_ss = 0, g_ss = 0, b_ss = 0;
   x = i - 1;
   ii = 0;
-
-  while (x <= i + 1) { // while para controlar o tamanho da matriz do filtro afim de que ele sempre seja zerado , quando o segundo while chega ao fim esse while continua  até a matriz chegar a posição 3x3 onde irá ser resetada
+// while para controlar o tamanho da matriz do filtro
+//afim de que ele sempre seja zerado , quando o segundo while
+//chega ao fim esse while continua  até a matriz chegar a posição 3x3 onde irá ser resetada
+  while (x <= i + 1) { 
     y = j - 1;
     jj = 0;
     while (y <= j + 1) {
@@ -244,12 +276,17 @@ Imagem* rotacionar90(Imagem* imagem_original) { // função criada para rotacionar
   Imagem * novaimg = criar_imagem(altura, largura);// uma nova imagem é criada , sendo clone da original
   for (i = 0; i < altura; ++i) {
     for (j = 0; j < largura; ++j) {
-      novaimg -> pixels[j][(altura - 1) - i] = imagem_original -> pixels[i][j];// nesse for os pixels serao colocados com a linha começando do final e a colunar normal , com isso vai se dar o efeito de 90 graus na imagem
+    	// nesse for os pixels serao colocados com a linha
+		//começando do final e a colunar normal , com isso vai se dar o efeito de 90 graus na imagem
+      novaimg -> pixels[j][(altura - 1) - i] = imagem_original -> pixels[i][j];
     }
   }
   return novaimg;
 }
-Imagem* Rotacionar180(Imagem* imagem_original) { // funcao para rotacionar a imagem 180graus , que não é muito misterio, pois so é necessario aplicar o rotacionar90 duas vezes para que se consiga os 180 graus
+// funcao para rotacionar a imagem 180graus ,
+//que não é muito misterio, pois so é necessario aplicar
+//o rotacionar90 duas vezes para que se consiga os 180 graus
+Imagem* Rotacionar180(Imagem* imagem_original) { 
   int largura = imagem_original -> largura;
   int altura = imagem_original -> altura;
   Imagem* nova = criar_imagem(altura,largura);
@@ -309,7 +346,10 @@ void Salvar_Imagem(Imagem* img, char* nome_arquivo) {// funcao feita para salvar
   fprintf(arquivo, "P3\n"); // imprimirá a primeira linha
   fprintf(arquivo, "%i %i\n", img -> largura, img -> altura); // imprimirá  a segunda linha com a resolucao
   fprintf(arquivo, "255\n"); // imprimirá a terceira linha com a qualidade da imagem
-  for (i = 0; i < img -> altura; i++) { //for para percorer a matriz  de linha e coluna para a impressao , cada r ,g e b receberá os pixels da nova imagem e serão impressos posteriormente
+  //for para percorer a matriz  de linha e coluna
+  //para a impressao , cada r ,g e b receberá os
+  //pixels da nova imagem e serão impressos posteriormente
+  for (i = 0; i < img -> altura; i++) { 
     for (j = 0; j < img -> largura; j++) {
       r = img -> pixels[i][j].r;
       g = img -> pixels[i][j].g;
@@ -319,7 +359,10 @@ void Salvar_Imagem(Imagem* img, char* nome_arquivo) {// funcao feita para salvar
   }
   fclose(arquivo); // fechar o arquivo
 }
-int main() { // Funcao main que apenas servira para colocar o usuario em frente ao menu e pedirá qu escolha o nome da imagem a ser modifica e qual modificacao voce deseja fazer nela
+// Funcao main que apenas servira para colocar o usuario
+//em frente ao menu e pedirá que escolha o nome da imagem
+//a ser modifica e qual modificacao voce deseja fazer nela
+int main() { 
   Imagem* img;// foram criadas quatro variaveis apenas para facilitar a compreensao do codigo na hora da chamada de funcoes
   Imagem* filtro;
   Imagem* rotacionar;
@@ -332,7 +375,7 @@ int main() { // Funcao main que apenas servira para colocar o usuario em frente 
   printf("Digite o nome do arquivo que vc quer abrir com sua respectiva extensao\n");
   scanf("%s", &arquivo);
   img = ler_imagem(arquivo); // imagem ja clonada
-  printf("Digite Qual modificao voce deseja aplicar na imagem:");
+  printf("Digite Qual modificao voce deseja aplicar naimagem:");
   printf("\n 1- blur ;\n 2 - deteccao de bordas;\n 3- sharpening ;\n 4-rotacionar 90 graus \n 5-rotacionar 180 graus\n 6-rotacionar 270 graus\n 7-Espelhar\n 8-reduzir2x \n 9-reduzir4x\n 10-reduzir8x\n 11-zoom2x\n 12-zoom4x\n 13-zoom8x\n 14-binarizacao\n sair-0\n");
   scanf("%i", &opcao);
 // dependendo do tipo de opcao escolhida pelo usuario , a transformação na imagem será aplicada
